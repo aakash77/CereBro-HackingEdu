@@ -1,0 +1,25 @@
+{
+  "name": "MuseOsc",
+  "version": "1.0.0",
+  "description": "HackingEdu",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aakash Mangal",
+  "license": "ISC",
+  "dependencies": {
+		"node-osc": "0.2.x",
+		"socket.io": "0.9.x"
+	},
+	"keywords": [
+		"osc",
+		"socket",
+                "websockets",
+                "music"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/automata/osc-web.git"
+	}
+}
