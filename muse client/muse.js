@@ -9,9 +9,12 @@ $(function(window, undefined){
 	const THETA_SESSION = "/muse/elements/theta_session_score";
 	var mellow_timer = null;
 	var theta_session_timer = null;
-	const TIME_LIMIT = 15000;
+	const TIME_LIMIT = 20000;
 	const HORSESHOE_LOWER_LIMIT=12;
 	var validHorseShoe = [];
+	
+	var mellow_sum=0,mellow_count=0;
+	var theta_sum=0,theta_count=0;
 	
 	window.Muse = window.Muse || {
 			eeg : {
@@ -144,17 +147,25 @@ $(function(window, undefined){
 					}
 					//Handling Concentration of the student using Mellow signal
 					else if(obj[0]===MELLOW){
-						if(obj[1]>DISTRACTION_LIMIT){
-							if(mellow_timer){
-								if(Date.now() - mellow_timer > TIME_LIMIT)
+						
+						if(mellow_timer){
+							if(Date.now() - mellow_timer > TIME_LIMIT){
+								if((mellow_sum/mellow_count) > DISTRACTION_LIMIT){
 									console.log("You are distracted and its time for some quiz now");
 									//pop up quiz
-							}else
-								mellow_timer = Date.now();
-						}else
-							mellow_timer = null;
+								}
+								mellow_count=0;
+								mellow_sum=0;
+								mellow_timer=null;
+							}
+						}else{
+							mellow_timer = Date.now();
+						}
+						
+						mellow_sum+=obj[1];
+						mellow_count++;
 					} else if(obj[0]===HORSESHOE){
-							if(obj.slice(1).reduce(function(pv, cv) { return pv + cv; }, 0) >= HORSESHOE_LOWER_LIMIT){
+							if(obj.slice(1).reduce(function(pv, cv) { return pv + cv; }, 0) > HORSESHOE_LOWER_LIMIT){
 								console.log("Muse Device not working please configure it again");
 								//break/pause video;
 							}
@@ -165,26 +176,28 @@ $(function(window, undefined){
 							}
 					} else{
 						//when THETA_SESSION
-						var count = 0;
-						var sum=0;
-						for(var i=0;i<validHorseShoe.length;i++){
-							if(validHorseShoe[i]){
-								sum+=obj[i+1];
-								count++;
-							}
-						}
-						if((sum/count) > UNDERSTANDING_LIMIT){
-							if(theta_session_timer){
-								if(Date.now() - theta_session_timer > TIME_LIMIT){
+						if(theta_session_timer){
+
+							if(Date.now() - theta_session_timer > TIME_LIMIT){
+										
+								if((theta_sum/theta_count) > UNDERSTANDING_LIMIT){
 									console.log("You are unable to understand the topic and its time for Wolfram Alpha");
 									//Q&A
 								}
-							}else
-								theta_session_timer = Date.now();
-						}else
-							theta_session_timer = null;
+								theta_sum = 0;
+								theta_count=0;
+								theta_timer=null;
+							}
+						}else{
+							theta_session_timer = Date.now();
+						}
+						for(var i=0;i<validHorseShoe.length;i++){
+							if(validHorseShoe[i]){
+								theta_sum+=obj[i+1];
+								theta_count++;
+							}
+						}
 					}
-					//museData.push(obj);
 			    });
 			}
 	}
