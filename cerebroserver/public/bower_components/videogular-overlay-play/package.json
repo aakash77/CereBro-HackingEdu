@@ -1,0 +1,36 @@
+{
+  "name": "videogular-overlay-play",
+  "version": "1.3.2",
+  "main": "index.js",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-release": "~0.7.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "gitHead": "968a21bef38ad1b93888ed32a7c4a2432f9a9586",
+  "description": "bower-videogular-overlay-play =============================",
+  "_id": "videogular-overlay-play@1.3.2",
+  "scripts": {},
+  "_shasum": "97c4daaa2c2447e3ccbbd95529e828d7c6ddf76b",
+  "_from": "videogular-overlay-play@*",
+  "_npmVersion": "2.11.2",
+  "_nodeVersion": "0.12.5",
+  "_npmUser": {
+    "name": "elecash",
+    "email": "elecash@gmail.com"
+  },
+  "dist": {
+    "shasum": "97c4daaa2c2447e3ccbbd95529e828d7c6ddf76b",
+    "tarball": "http://registry.npmjs.org/videogular-overlay-play/-/videogular-overlay-play-1.3.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "elecash",
+      "email": "elecash@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/videogular-overlay-play/-/videogular-overlay-play-1.3.2.tgz"
+}

@@ -1,0 +1,215 @@
+<!doctype html>
+
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="scotchTodo">
+<head>
+	<!-- META -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+	<title>CereBro</title>
+
+	<!-- SCROLLS -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<style>
+		html 					{ overflow-y:scroll; }
+		body 					{ padding-top:50px; }
+		#todo-list 				{ margin-bottom:30px; }
+		#todo-form 	 			{ margin-bottom:50px; }
+		.videogular-container {
+			width: 100%;
+			height: 320px;
+			margin: auto;
+			overflow: hidden;
+		}
+		 
+		@media (min-width: 1200px) {
+			.videogular-container {
+				width: 1170px;
+				height: 658.125px;
+			}
+		}
+		 
+		@media (min-width: 992px) and (max-width: 1199px) {
+			.videogular-container {
+				width: 940px;
+				height: 528.75px;
+			}
+		}
+		 
+		@media (min-width: 768px) and (max-width: 991px) {
+			.videogular-container {
+				width: 728px;
+				height: 409.5px;
+			}
+		}
+
+		.ng-modal-overlay {
+		  /* A dark translucent div that covers the whole screen */
+		  position:fixed;
+		  z-index:9999;
+		  top:0;
+		  left:0;
+		  width:100%;
+		  height:100%;
+		  background-color:#000000;
+		  opacity: 0.8;
+		}
+		.ng-modal-dialog {
+		  /* A centered div above the overlay with a box shadow. */
+		  z-index:10000;
+		  position: absolute;
+		  width: 50%; /* Default */
+		  min-height: 150px;
+		  overflow: visible;
+		  overflow-y: scroll;
+		  /* Center the dialog */
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
+		  -webkit-transform: translate(-50%, -50%);
+		  -moz-transform: translate(-50%, -50%);
+
+		  background-color: #fff;
+		  box-shadow: 4px 4px 80px #000;
+		}
+		.ng-modal-dialog-content {
+		  padding:10px;
+		  text-align: left;
+		}
+		.ng-modal-close {
+		  position: absolute;
+		  top: 3px;
+		  right: 5px;
+		  padding: 5px;
+		  cursor: pointer;
+		  font-size: 120%;
+		  display: inline-block;
+		  font-weight: bold;
+		  font-family: 'arial', 'sans-serif';
+		}
+	</style>
+
+	<!-- SPELLS -->
+
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+	<script src="bower_components/videogular/videogular.js"></script>
+	<script src="bower_components/videogular-controls/vg-controls.js"></script>
+	<script src="bower_components/videogular-overlay-play/vg-overlay-play.js"></script>
+	<script src="bower_components/videogular-poster/vg-poster.js"></script>
+	<script src="bower_components/videogular-buffering/vg-buffering.js"></script>
+
+
+	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
+	<script src="js/services/todos.js"></script> <!-- load our todo service -->
+	<script src="js/core.js"></script> <!-- load our main application -->
+	<script src="js/services/wolfram.js"></script> <!-- load our Wolfram service -->
+	<script src="js/directives/modal.js"></script> <!-- load up our modal directive -->
+
+</head>
+<!-- SET THE CONTROLLER -->
+<body ng-controller="mainController as controller">
+	<div class="container">
+
+		<!-- HEADER AND TODO COUNT -->
+		<div class="jumbotron text-center">
+			<h1>CereBro</h1>
+		</div>
+
+		<button ng-click='togglequizModal()'>Open Quiz Dialog</button>
+		<button ng-click='togglequeryModal()'>Open Query Dialog</button>
+
+		<!-- Video LIST -->
+		<div id="video-player" class="row">
+			<div  class="videogular-container">
+				<videogular vg-theme="controller.config.theme">
+					<vg-media vg-src="controller.config.sources"
+							vg-tracks="controller.config.tracks">
+					</vg-media>
+
+					<vg-controls>
+						<vg-play-pause-button></vg-play-pause-button>
+						<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+						<vg-scrub-bar>
+							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+						</vg-scrub-bar>
+						<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+						<vg-volume>
+							<vg-mute-button></vg-mute-button>
+							<vg-volume-bar></vg-volume-bar>
+						</vg-volume>
+						<vg-fullscreen-button></vg-fullscreen-button>
+					</vg-controls>
+		 
+					<vg-overlay-play></vg-overlay-play>
+					<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
+				</videogular>
+			</div>
+		</div>
+
+	
+	<!-- Modals for Quizes and Queries -->
+		<!-- Quiz -->
+		<modal-dialog show='quizModalShown' width='750px' height='60%'>
+			<p>Here is a Quiz for you:</p>
+			<p>Write a program to print 'Hello, World' using Java:</p>
+			<div class="text-center col-sm-12" ng-show="loading">
+		  		<div class="dots-loader center-block">Loading…</div>
+		  	</div>
+			<p class="bg-success" ng-show="(quizResult.result == 'success')">Congrats! Your program passed all Test Case. Runtime: {{quizResult.time[0]}} seconds</p>
+			<p class="bg-warning" ng-show="(quizResult.result == 'failed')">Sorry! Your program failed Test Case</p>
+			<p class="bg-danger" ng-show="(quizResult.result == 'error')">Oops! Compiler gave following error: {{quizResult.compilemessage[0]}}</p>
+			  <textarea id="codeInput" rows="10" cols="100" ng-model="quizArea">
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+	// write code here
+}
+			  </textarea>
+			  <button type="button" class="btn btn-primary col-sm-2" ng-click="fireQuiz(quizArea)">Run Program</button>
+		</modal-dialog>
+
+		<!-- Query -->
+		<modal-dialog show='queryModalShown' width='750px' height='70%'>
+			  <p>You seem stressed, If you find any topic diffcult to understand, please write below:</p>
+			  	<div class="input-group text-center col-sm-12">
+			  		<input type="text" class="form-control col-sm-8" placeholder="Enter your query" ng-model="textArea">
+					<button type="button" class="btn btn-primary col-sm-2" ng-click="fireQuery(textArea)">Ask</button>
+			  	</div>
+			  <div id="wolfram-result" class="col-sm-12">
+			  	<div class="text-center col-sm-12" ng-show="loading">
+			  		<div class="dots-loader center-block">Loading…</div>
+			  	</div>
+			  	<div id="resultDiv">
+			  		<div ng-repeat="result in queryResult">
+				  		<h3>{{result.title}}</h3>
+				  		<div ng-repeat="subpod in result.subpods">
+				  			<img ng-src="{{subpod.image}}" alt="{{subpod.value}}"/>
+				  		</div>
+				  		<hr>
+				  		</div>
+				  	</div>
+			  	</div>
+		</modal-dialog>
+	</div>
+
+</body>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="http://css-spinners.com/css/spinner/pulse.css" type="text/css">
+
+</html>

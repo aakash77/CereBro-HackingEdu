@@ -1,0 +1,38 @@
+{
+  "name": "videogular-angulartics",
+  "version": "1.3.2",
+  "main": "index.js",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-release": "~0.7.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "gitHead": "32c71333fe3355b391ec6fe92ccbb4dfbabfd741",
+  "description": "bower-videogular-analytics ==========================",
+  "_id": "videogular-angulartics@1.3.2",
+  "_shasum": "ce9bce0827ab29cf6d5ff9ac87c92c636572c66a",
+  "_from": "videogular-angulartics@*",
+  "_npmVersion": "2.11.2",
+  "_nodeVersion": "0.12.5",
+  "_npmUser": {
+    "name": "elecash",
+    "email": "elecash@gmail.com"
+  },
+  "dist": {
+    "shasum": "ce9bce0827ab29cf6d5ff9ac87c92c636572c66a",
+    "tarball": "http://registry.npmjs.org/videogular-angulartics/-/videogular-angulartics-1.3.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "elecash",
+      "email": "elecash@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/videogular-angulartics/-/videogular-angulartics-1.3.2.tgz"
+}
