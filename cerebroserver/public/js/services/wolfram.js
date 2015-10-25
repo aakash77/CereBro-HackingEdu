@@ -11,7 +11,7 @@
 		return {
 			post : function(input) {
 				var params = {
-			        apiKey: "XXX",
+			        apiKey: "hackerrank|117631-391|d0ccf73d887c2d7cae3688f299aa81aca1734d66",
 					source: input,
 					lang: 3,
 					testcases: "[\"Test 1\", \"Test 2\"]",

@@ -8,7 +8,7 @@ var morgan   = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var http = require('http');
-var wolfram = require('wolfram').createClient("XXX")
+var wolfram = require('wolfram').createClient("2APKW7-7T6KULKPRP")
 
 // configuration ===============================================================
 
@@ -21,11 +21,10 @@ app.use(bodyParser.json()); // parse application/json
 
 // routes ======================================================================
 app.get('/api/query/:input', function(req, res) {
-		console.log();
-		console.log();
 		var input = req.params.input;
+		console.log(input);
 		var format = 'plaintext';//req.param('format');
-		var appid = "XXX";
+		var appid = "2APKW7-7T6KULKPRP";
 		var path = '/v2/query?appid='+appid+'&input='+input+'&format=html';
 		// getQueryAnswer(res, path);
 		input = unescape(input);

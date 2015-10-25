@@ -18,7 +18,7 @@
 		#todo-list 				{ margin-bottom:30px; }
 		#todo-form 	 			{ margin-bottom:50px; }
 		.videogular-container {
-			width: 100%;
+			width: 70%;
 			height: 320px;
 			margin: auto;
 			overflow: hidden;
@@ -26,8 +26,8 @@
 		 
 		@media (min-width: 1200px) {
 			.videogular-container {
-				width: 1170px;
-				height: 658.125px;
+				width: 799.99px;
+				height: 450px;
 			}
 		}
 		 
@@ -101,36 +101,37 @@
 	<script src="bower_components/videogular-poster/vg-poster.js"></script>
 	<script src="bower_components/videogular-buffering/vg-buffering.js"></script>
 
-
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
 	<script src="js/services/todos.js"></script> <!-- load our todo service -->
 	<script src="js/core.js"></script> <!-- load our main application -->
 	<script src="js/services/wolfram.js"></script> <!-- load our Wolfram service -->
 	<script src="js/directives/modal.js"></script> <!-- load up our modal directive -->
+	<script src="js/muse/muse.js" type="text/javascript"></script>
+	<script src="http://127.0.0.1:5000/socket.io/socket.io.js" type="text/javascript"></script>
 
 </head>
 <!-- SET THE CONTROLLER -->
-<body ng-controller="mainController as controller">
+<body ng-controller="mainController as controller" id="mainC">
+	<!-- HEADER AND TODO COUNT -->
+		<nav class="navbar navbar-inverse navbar-static-top" style="margin-top: -4%;">
+		  <div class="container text-center ">
+		    <h2 style="color:white;">CereBro</h2>
+		  </div>
+		</nav>
 	<div class="container">
-
-		<!-- HEADER AND TODO COUNT -->
-		<div class="jumbotron text-center">
-			<h1>CereBro</h1>
-		</div>
-
-		<button ng-click='togglequizModal()'>Open Quiz Dialog</button>
-		<button ng-click='togglequeryModal()'>Open Query Dialog</button>
-
 		<!-- Video LIST -->
 		<div id="video-player" class="row">
 			<div  class="videogular-container">
-				<videogular vg-theme="controller.config.theme">
+				<videogular vg-theme="controller.config.theme"
+				vg-update-state="stateChange">
 					<vg-media vg-src="controller.config.sources"
 							vg-tracks="controller.config.tracks">
 					</vg-media>
 
 					<vg-controls>
-						<vg-play-pause-button></vg-play-pause-button>
+						<vg-play-pause-button ng-click="stateChange()"></vg-play-pause-button>
 						<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
 						<vg-scrub-bar>
 							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
@@ -143,12 +144,15 @@
 						<vg-fullscreen-button></vg-fullscreen-button>
 					</vg-controls>
 		 
-					<vg-overlay-play></vg-overlay-play>
+					<vg-overlay-play ng-click="stateChange()"></vg-overlay-play>
 					<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
 				</videogular>
 			</div>
 		</div>
-
+		<div class="row text-center"><br />
+			<button class="btn btn-primary col-sm-offset-3 col-sm-2" ng-click='togglequizModal()'>Quiz Box</button>
+			<button  class="btn btn-primary col-sm-offset-1 col-sm-2" ng-click='togglequeryModal()'>Query Box</button>
+		</div>
 	
 	<!-- Modals for Quizes and Queries -->
 		<!-- Quiz -->
@@ -161,13 +165,7 @@
 			<p class="bg-success" ng-show="(quizResult.result == 'success')">Congrats! Your program passed all Test Case. Runtime: {{quizResult.time[0]}} seconds</p>
 			<p class="bg-warning" ng-show="(quizResult.result == 'failed')">Sorry! Your program failed Test Case</p>
 			<p class="bg-danger" ng-show="(quizResult.result == 'error')">Oops! Compiler gave following error: {{quizResult.compilemessage[0]}}</p>
-			  <textarea id="codeInput" rows="10" cols="100" ng-model="quizArea">
-import java.io.*;
-import java.util.*;
-
-public class Solution {
-	// write code here
-}
+			  <textarea id="codeInput" rows="10" cols="100" ng-model="quizArea"> 
 			  </textarea>
 			  <button type="button" class="btn btn-primary col-sm-2" ng-click="fireQuiz(quizArea)">Run Program</button>
 		</modal-dialog>
@@ -176,7 +174,7 @@ public class Solution {
 		<modal-dialog show='queryModalShown' width='750px' height='70%'>
 			  <p>You seem stressed, If you find any topic diffcult to understand, please write below:</p>
 			  	<div class="input-group text-center col-sm-12">
-			  		<input type="text" class="form-control col-sm-8" placeholder="Enter your query" ng-model="textArea">
+			  		<input type="text" class="form-control col-sm-8" placeholder="Enter your query" ng-model="textArea"><br />
 					<button type="button" class="btn btn-primary col-sm-2" ng-click="fireQuery(textArea)">Ask</button>
 			  	</div>
 			  <div id="wolfram-result" class="col-sm-12">
@@ -184,6 +182,7 @@ public class Solution {
 			  		<div class="dots-loader center-block">Loading…</div>
 			  	</div>
 			  	<div id="resultDiv">
+			  		<span ng-show="noresult">No result. Please try again!</span>
 			  		<div ng-repeat="result in queryResult">
 				  		<h3>{{result.title}}</h3>
 				  		<div ng-repeat="subpod in result.subpods">
@@ -198,9 +197,7 @@ public class Solution {
 
 </body>
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-
+<script src="js/muse/main.js" type="text/javascript"></script>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
 

@@ -11,11 +11,16 @@ angular.module('videoController', [
 		$scope.queryResult = [];
 		$scope.loading = false;
 		$scope.sucess = false;
-		this.config = {
+		$scope.playerState = false;
+		$scope.noresult = false;
+		$scope.quizArea = "import java.io.*;\nimport java.util.*;\npublic class Solution {\n\r\t// write code here\n}";
+
+		var controller = this;
+		controller.config = {
 				sources: [
-					{src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.mp4"), type: "video/mp4"},
-					{src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.webm"), type: "video/webm"},
-					{src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.ogg"), type: "video/ogg"}
+					{src: $sce.trustAsResourceUrl("http://www.scuc.txed.net/webpages/rburton/files/algorithms%20lesson%203-%20merge%20sort1.mp4"), type: "video/mp4"},
+					{src: $sce.trustAsResourceUrl("http://www.scuc.txed.net/webpages/rburton/files/algorithms%20lesson%205-%20linear%20and%20binary%20searching.mp4"), type: "video/mp4"},
+					{src: $sce.trustAsResourceUrl("http://www.scuc.txed.net/webpages/rburton/files/algorithms%20lesson%202-%20insertion%20sort.mp4"), type: "video/mp4"}
 				],
 				tracks: [
 					{
@@ -28,12 +33,28 @@ angular.module('videoController', [
 				],
 				theme: "bower_components/videogular-themes-default/videogular.css",
 				plugins: {
-					poster: "http://www.videogular.com/assets/images/videogular.png"
+					poster: "http://xoax.net/comp_sci/crs/algorithms/lessons/Lesson3/Image3.png"
 				}
 			};
+			controller.onPlayerReady = function(API) {
+				console.log(API);
+				controller.API = API;
+			};
+
+			
+			$scope.stateChange = function(){
+				$scope.playerState = !$scope.playerState;
+				console.log($scope.playerState);
+				if($scope.playerState)
+					establishSocketConnection();
+			};
+
+
+
+	// handle modal related events
 		$scope.togglequizModal = function() {
+			$scope.quizModalShown = !$scope.quizModalShown;
 		    $scope.queryModalShown = false;
-		    $scope.quizModalShown = !$scope.quizModalShown;
 		};
 
 		$scope.togglequeryModal = function() {
@@ -60,6 +81,10 @@ angular.module('videoController', [
 			$scope.textArea = text;
 			Wolfram.get(text).success(function (data){
 				$scope.loading = false;
+				if(data == "" || data.length == 0)
+					$scope.noresult = true;
+				else
+					$scope.noresult = false;
 				$scope.queryResult = data;
 				filterResult($scope.queryResult);
 			})
@@ -78,5 +103,28 @@ function filterResult(qresult){
 		for(var i =0; i<length;i++){
 			console.log(qresult[i]);
 		}
+	}
+}
+
+distractedCount = 0;
+stressedCount = 0;
+function getStudentStatus(status){
+	if(status == "distracted")
+		distractedCount++;
+	if(status == "stressed")
+		stressedCount++;
+
+	if(stressedCount > 10){
+		console.log("disconnected due to stress");
+		console.log(document.getElementsByClassName("play")[0]);
+		document.getElementsByClassName("play")[0].click();
+		closeConnection();
+		angular.element(document.getElementById('mainC')).scope().togglequeryModal();
+	}else if(distractedCount > 10){
+		console.log("disconnected due to distraction");
+		document.getElementsByClassName("play")[0].click();
+		closeConnection();
+		angular.element(document.getElementById('mainC')).scope().togglequizModal();
+
 	}
 }
